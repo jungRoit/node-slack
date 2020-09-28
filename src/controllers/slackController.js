@@ -5,10 +5,11 @@ import BadRequest from '../error/BadRequest';
 
 const slackController = Router();
 
-slackController.post('/', async (req, res, next) => {
+slackController.post('/post', async (req, res, next) => {
   try {
-    const response = await slackService.sendMessage();
-    res.status(200).send(response);
+    const {data:channels} = await slackService.getChannels();
+    console.log('data',channels);
+    res.status(200).send(channels);
   } catch (error) {
     console.log(' err', error);
     next(error);
