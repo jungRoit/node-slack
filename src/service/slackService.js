@@ -1,9 +1,15 @@
 import axios from './axiosService';
-import { getAccessTokenUrl, getChannelsUrl } from '../config/url';
+import { getAccessTokenUrl, getChannelsUrl, postMessageUrl } from '../config/url';
 import { getQueryString } from '../utils/util';
 require('dotenv').config();
 
-export const sendMessage = async () => {};
+export const sendMessage = async body => {
+  return axios.post(postMessageUrl,body,{
+    headers: {
+      'Authorization': `Bearer ${process.env['ACCESS_TOKEN']}`,
+      'Content-Type':'application/json'
+    }
+  });};
 
 export const getChannels = async () => {
   return axios.get(getChannelsUrl,{
