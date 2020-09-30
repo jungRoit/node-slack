@@ -1,6 +1,9 @@
 import axios from './axiosService';
-import { getAccessTokenUrl, getChannelsUrl, postMessageUrl } from '../config/url';
-import { getQueryString } from '../utils/util';
+import streamifier  from 'streamifier';
+import FormData from 'form-data' ;
+
+import { getAccessTokenUrl, getChannelsUrl, postMessageUrl, uploadImageUrl } from '../config/url';
+import { getQueryString, bufferToStream } from '../utils/util';
 require('dotenv').config();
 
 export const sendMessage = async body => {
@@ -9,7 +12,8 @@ export const sendMessage = async body => {
       'Authorization': `Bearer ${process.env['ACCESS_TOKEN']}`,
       'Content-Type':'application/json'
     }
-  });};
+  });
+};
 
 export const getChannels = async () => {
   return axios.get(getChannelsUrl,{
@@ -18,6 +22,21 @@ export const getChannels = async () => {
     }
   });
 }
+
+export const uploadImage = async body => {
+  let bodyFormData = new FormData();
+  bodyFormData.append('file',body.file.buffer, body.file.originalname);
+  bodyFormData.append('channels', body.channels);
+
+  return axios({
+    method: 'POST',
+    url:uploadImageUrl,
+    data:bodyFormData,
+    headers: {
+        'Authorization': `Bearer ${process.env['ACCESS_TOKEN']}`,
+        'Content-Type': `multipart/form-data; boundary=${bodyFormData._boundary}`      }
+  });
+};
 
 export const getAccessToken = async (code) => {
   const body = getQueryString({

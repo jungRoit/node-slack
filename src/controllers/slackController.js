@@ -4,6 +4,7 @@ import { clientRedirectUrl } from '../config/url';
 import BadRequest from '../error/BadRequest';
 import {generateUUID} from '../utils/uuid';
 import {getChannelByName} from '../utils/util';
+import { parseMultiPartFormData } from '../middlewares/imageMIddleware';
 import { validatePostImageBody } from '../middlewares/validation';
 
 const slackController = Router();
@@ -55,6 +56,30 @@ slackController.post('/post-image', validatePostImageBody, async (req, res, next
   } catch (error) {
     next(error);
   }
+});
+
+slackController.post('/upload-image', parseMultiPartFormData, async (req, res, next) => {
+  try {
+    console.log('controller');
+    const { body } = req;
+    console.log('body', body);
+    const requestBody = {
+      file: req.file,
+      channels: req.body.channels,
+    }
+
+    const response = await slackService.uploadImage(requestBody);
+    if(!response.data.ok) {
+      throw new BadRequest({
+        message: 'Slack Error: sending message',
+        details: response.data.error || 'Invalid Payload',
+        code: 400,
+      });
+    }
+    res.status(200).send({message:'success'});
+  } catch (error) {
+    next(error);
+}
 });
 
 slackController.get('/authorize', async (req, res, next) => {

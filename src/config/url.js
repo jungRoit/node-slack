@@ -6,3 +6,4 @@ export const clientRedirectUrl = `https://slack.com/oauth/v2/authorize?scope=inc
 export const postMessageUrl = `${slackBaseUrl}/chat.postMessage`;
 export const getAccessTokenUrl = `${slackBaseUrl}/oauth.v2.access`;
 export const getChannelsUrl = `${slackBaseUrl}/conversations.list`;
+export const uploadImageUrl = `${slackBaseUrl}/files.upload`;
